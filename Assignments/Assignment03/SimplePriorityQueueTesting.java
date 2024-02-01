@@ -1,11 +1,10 @@
 package assign03;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,26 +13,18 @@ class SimplePriorityQueueTesting {
 
 	private SimplePriorityQueue<String> emptyStringQueue;
 	private SimplePriorityQueue<String> smallStringQueue;
-	private SimplePriorityQueue<String> largeStringQueue;
-	private SimplePriorityQueue<String> veryLargeStringQueue;
 	
 	private SimplePriorityQueue<Integer> emptyIntegerQueue;
 	private SimplePriorityQueue<Integer> smallIntegerQueue;
-	private SimplePriorityQueue<Integer> largeIntegerQueue;
-	private SimplePriorityQueue<Integer> veryLargeIntegerQueue;
 
 	
 	@BeforeEach
 	void setup() throws Exception {
 		emptyStringQueue = new SimplePriorityQueue<>();
 		smallStringQueue = new SimplePriorityQueue<>();
-		largeStringQueue = new SimplePriorityQueue<>();
-		veryLargeStringQueue = new SimplePriorityQueue<>();
 		
 		emptyIntegerQueue = new SimplePriorityQueue<>();
 		smallIntegerQueue = new SimplePriorityQueue<>();
-		largeIntegerQueue = new SimplePriorityQueue<>();
-		veryLargeIntegerQueue = new SimplePriorityQueue<>();
 		
 		smallStringQueue.insert("Aiden");
 		smallStringQueue.insert("Chris");
@@ -50,6 +41,10 @@ class SimplePriorityQueueTesting {
 	}
 	
 	// Testing Comparable Interface Implementation ----------------------------------------------------
+	@Test
+	void testSizeOnNotEmptyQueue() {
+		assertEquals(smallStringQueue.size(), 5);
+	}
 	
 	@Test
 	void testIsEmptyOnEmptyStringQueue(){
@@ -77,7 +72,12 @@ class SimplePriorityQueueTesting {
 	void testFindMaxOnTwoElementStringQueue() {
 		emptyStringQueue.insert("Hello");
 		emptyStringQueue.insert("Goodbye");
-		assertEquals("Goodbye", emptyStringQueue.findMax());
+		assertEquals("Hello", emptyStringQueue.findMax());
+	}
+	
+	@Test 
+	void testSizeOnEmptyStringQueue(){
+		assertEquals(0, emptyStringQueue.size());
 	}
 	
 	@Test
@@ -100,7 +100,6 @@ class SimplePriorityQueueTesting {
 		assertTrue(smallIntegerQueue.contains(5));
 	}
 	
-	// Need to make sure the contains method works before testing this.
 	@Test
 	void testInsertCollectionOnEmptyStringQueue() {
 		List<String> listOfStrings = List.of("a", "b", "c", "d", "e", "f");
@@ -113,13 +112,47 @@ class SimplePriorityQueueTesting {
 		assertTrue(emptyStringQueue.contains("f"));
 	}
 
+	@Test
+	void testOnEmptyStringQueueOutOfOrderCollection() {
+		List<String> listOfStrings = List.of("c", "a", "d", "b", "a", "e");
+		emptyStringQueue.insertAll(listOfStrings);
+		assertEquals(emptyStringQueue.deleteMax(), "e");
+		assertEquals(emptyStringQueue.deleteMax(), "d");
+		assertEquals(emptyStringQueue.deleteMax(), "c");
+		assertEquals(emptyStringQueue.deleteMax(), "b");
+		assertEquals(emptyStringQueue.deleteMax(), "a");
+		assertEquals(emptyStringQueue.deleteMax(), "a");
+	}
+	
+	@Test
+	void testOnEmptyIntegerQueueOutOfOrderCollection() {
+		List<Integer> listOfInts = List.of(100, -2, 0, 0, 0, 5, -100, 22, 43);
+		emptyIntegerQueue.insertAll(listOfInts);
+		assertEquals(emptyIntegerQueue.deleteMax(), 100);
+		assertEquals(emptyIntegerQueue.deleteMax(), 43);
+		assertEquals(emptyIntegerQueue.deleteMax(), 22);
+		assertEquals(emptyIntegerQueue.deleteMax(), 5);
+		assertEquals(emptyIntegerQueue.deleteMax(), 0);
+		assertEquals(emptyIntegerQueue.deleteMax(), 0);
+		assertEquals(emptyIntegerQueue.deleteMax(), 0);
+		assertEquals(emptyIntegerQueue.deleteMax(), -2);
+		assertEquals(emptyIntegerQueue.deleteMax(), -100);
+
+	}
+	
+	@Test
+	void testOnEmptyIntegerQueueIncreaseBackingArray() {
+		List<Integer> listOfInts = List.of(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		emptyIntegerQueue.insertAll(listOfInts);
+		assertEquals(emptyIntegerQueue.size(), 15);
+	}
 	
 	@Test
 	void testDeleteMaxOnFullStringQueue() {
 		List<String> listOfStrings = List.of("a", "b", "c", "d", "e", "f");
 		emptyStringQueue.insertAll(listOfStrings);
-		assertEquals(emptyStringQueue.deleteMax(), "a");
-		assertEquals(emptyStringQueue.deleteMax(), "b");
+		assertEquals(emptyStringQueue.deleteMax(), "f");
+		assertEquals(emptyStringQueue.deleteMax(), "e");
 	}
 	
 	@Test
@@ -132,6 +165,25 @@ class SimplePriorityQueueTesting {
 		smallStringQueue.clear();
 		assertEquals(smallStringQueue.size(), 0);
 	}
+	
+	@Test
+	void testFindMaxAllTheSame() {
+		for(int i = 0; i < 40; i++) {
+			emptyIntegerQueue.insert(0);
+		}
+		assertEquals(emptyIntegerQueue.findMax(), 0);
+	}
+	
+	@Test
+	void testDeleteMaxAllTheSame() {
+		for(int i = 0; i < 40; i++) {
+			emptyIntegerQueue.insert(0);
+		}
+		assertEquals(emptyIntegerQueue.deleteMax(), 0);
+		assertEquals(emptyIntegerQueue.size(), 39);
+	}
+	
+	
 	// Testing Comparator Interface Implementation ----------------------------------------------------
 	
 	/**
@@ -144,7 +196,7 @@ class SimplePriorityQueueTesting {
 		smallIntegerQueue.insert(5);
 		smallIntegerQueue.insert(1);
 		
-		assertEquals(smallIntegerQueue.findMax(), 5);
+		assertEquals(smallIntegerQueue.findMax(), 1);
 	}
 	
 	@Test
@@ -156,7 +208,7 @@ class SimplePriorityQueueTesting {
 		smallIntegerQueue.insert(1);
 		smallIntegerQueue.deleteMax();
 		
-		assertEquals(smallIntegerQueue.findMax(), 4);
+		assertEquals(smallIntegerQueue.findMax(), 3);
 	}
 	
 	@Test
@@ -174,6 +226,54 @@ class SimplePriorityQueueTesting {
 		smallIntegerQueue.clear();
 		assertEquals(smallIntegerQueue.size(), 0);
 	}
-	// Testing Bianry Search -----------------------------------------------------------------
+	
+	@Test
+	void testReverseOrderingIntContains() {
+		smallIntegerQueue = new SimplePriorityQueue<Integer>((num1, num2) -> num2.compareTo(num1));
+		smallIntegerQueue.insert(3);
+		smallIntegerQueue.insert(0);
+		smallIntegerQueue.insert(-2);
+		assertTrue(smallIntegerQueue.contains(-2) && smallIntegerQueue.contains(0) && smallIntegerQueue.contains(3));
+		assertFalse(smallIntegerQueue.contains(1));
+	}
+	
+	@Test
+	void testReverseOrderingStringInsert() {
+		smallStringQueue = new SimplePriorityQueue<String>((str1, str2) -> str2.compareTo(str1));
+		smallStringQueue.insert("I LOVE CS 2420");
+		smallStringQueue.insert("Aiden");
+		smallStringQueue.insert("Chris");
+		smallStringQueue.insert("Hello");
+		smallStringQueue.insert("World");
+		smallStringQueue.insert("CS2420");
+		assertEquals(smallStringQueue.deleteMax(), "Aiden");
+		assertEquals(smallStringQueue.size(), 5);
+	}
 
+	@Test
+	void testInsertsNewValueInSameValue() {
+		smallIntegerQueue = new SimplePriorityQueue<Integer>((num1, num2) -> num2.compareTo(num1));
+		for (int i = 0; i < 40; i++)
+			smallIntegerQueue.insert(0);
+		smallIntegerQueue.insert(1);
+		assertEquals(smallIntegerQueue.deleteMax(), 0);
+		assertEquals(smallIntegerQueue.size(), 40);
+	}
+	
+	@Test
+	void testThrowsWhenNoMoreElementsToDelete() {
+		assertThrows(NoSuchElementException.class,() -> emptyStringQueue.deleteMax());
+
+	}
+	
+	@Test
+	void testThrowsWhenMaxDoesntExistEmptyQueue() {
+		assertThrows(NoSuchElementException.class,() -> emptyStringQueue.findMax());
+	}
+	
+	@Test
+	void testVeryBigPriorityQueueDoesNotThrow() {
+		for (int i = 0; i < 100000; i++)
+			assertDoesNotThrow(() -> emptyIntegerQueue.insert(0));
+	}
 }
