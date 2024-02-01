@@ -17,22 +17,23 @@ public class PriorityQueueTimer extends TimerTemplate{
 	protected void setup(int n) {
 		insertQueue = new SimplePriorityQueue<Integer>();
 		maxQueue = new SimplePriorityQueue<Integer>();
+		maxQueue.insert(0);
 		
 	}
 
 	
 	protected void timingIteration(int n) {
-		for(int i = 0; i < n; i++)
-			insertQueue.insert(777);
+//		for(int i = 0; i < n; i++)
+//			insertQueue.insert(777);
 		
-		
+//		maxQueue.findMax();
 	}
 
 	
 	protected void compensationIteration(int n) {
-		for(int i = 0; i < n; i++) {
+//		for(int i = 0; i < n; i++) {
 			//do nothing
-		}
+//		}
 	}
 	
 	
@@ -42,10 +43,16 @@ public class PriorityQueueTimer extends TimerTemplate{
 				800000, 900000, 1000000, 1100000, 1200000, 1300000, 1400000, 1500000, 1600000, 1700000, 
 				1800000, 1900000, 2000000};
 		
+//		int[] pSize = new int[] {1000};
 		
 		PriorityQueueTimer time = new PriorityQueueTimer(20, pSize);
 		
-		time.run();
+		Record[] times = time.run();
+		
+		for (int i = 0; i < times.length; i++) {
+			System.out.println(times[i].toString());
+		}
+			
 	}
 	
 	
