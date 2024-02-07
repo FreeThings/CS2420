@@ -21,7 +21,7 @@ class LargestNumberSolverTest {
 
 	@BeforeEach
 	void setUp() {
-		intCmp = ((num1, num2) -> num2.compareTo(num1));
+		intCmp = ((num1, num2) -> num1.compareTo(num2));
 		emptyIntArr = new Integer[0];
 		smallIntArr = new Integer[] {1, 3, 45, 16, 23, 36, 79};
 		smallIntList.add(smallIntArr);
@@ -38,7 +38,7 @@ class LargestNumberSolverTest {
 	
 	@Test
 	void testInsertionSortNormalCase() {
-		Integer[] copyArr = new Integer[] {1, 3, 16, 23, 36, 45, 79};
+		Integer[] copyArr = new Integer[] {79, 45, 36, 23, 16, 3, 1};
 		LargestNumberSolver.insertionSort(emptyIntArr, intCmp);
 		assertEquals(copyArr, emptyIntArr);
 	}
