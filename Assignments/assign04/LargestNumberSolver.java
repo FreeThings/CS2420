@@ -13,17 +13,21 @@ public class LargestNumberSolver {
 	public static <T> void insertionSort(T[] arr, Comparator<? super T> cmp) {
 		
 		for (int i = 1; i < arr.length; i++) {
-			for (int j = i - 1; j >= 0 && cmp.compare(arr[j+1], arr[j]) > 0; j--){
+			for (int j = i - 1; j >= 0 && cmp.compare(arr[j], arr[j+1]) > 0; j--){
 				T temp = arr[j+1];
 				arr[j+1] = arr[j];
 				arr[j] = temp;
 			}
 		}
+		
 	}
 	
 	public static BigInteger findLargestNumber(Integer[] arr) {
+		Integer[] tempArr = arr.clone();
+		
 		if (arr.length == 0)
 			return new BigInteger("0");
+		
 		Comparator<Integer> cmp = (num1, num2) -> {
 			if (num1 == num2)
 				return 0;
@@ -31,17 +35,19 @@ public class LargestNumberSolver {
 			String strNum2 = num2.toString();
 			String comp1 = strNum1 + strNum2;
 			String comp2 = strNum2 + strNum1;
-			if (Integer.parseInt(comp1) > Integer.parseInt(comp2)) {
-				return 1;
-			} else {
+			if (comp1.equals(comp2))
+				return 0;
+			else if (Integer.parseInt(comp1) > Integer.parseInt(comp2)) {
 				return -1;
+			} else {
+				return 1;
 			}
 		};
 		
-		insertionSort(arr, cmp);
+		insertionSort(tempArr, cmp);
 		
 		StringBuilder bigNumber = new StringBuilder();
-		for (int i : arr)
+		for (int i : tempArr)
 			bigNumber.append(i);
 		
 		
@@ -86,11 +92,14 @@ public class LargestNumberSolver {
 	public static Integer[] findKthLargest(List<Integer[]> list, int k) throws IllegalArgumentException {
 		if (k > list.size()-1 || k < 0)
 			throw new IllegalArgumentException("Enter a k value within the range of list size.");
+		
 		BigInteger[] arr = new BigInteger[list.size()];
 		for (int i = 0; i < list.size(); i++)
 			arr[i] = findLargestNumber(list.get(i));
+		
 		BigInteger[] arrUnsorted = arr.clone();
-		insertionSort(arr, (num1, num2) -> (num1.compareTo(num2)));
+		insertionSort(arr, (num1, num2) -> (num2.compareTo(num1)));
+		
 		for(int i = 0; i < arr.length; i++) {
 			if (arr[k].equals(arrUnsorted[i]))
 				return list.get(i);
@@ -102,18 +111,25 @@ public class LargestNumberSolver {
 	public static List<Integer[]> readFile(String filename) {
 		List<Integer[]> fullList = new ArrayList<>();
 		Scanner file;
+		
 		try {
 			file = new Scanner(new File(filename));
 		} catch (FileNotFoundException e) {
 			return new ArrayList<Integer[]>();
 		}
+		
 		while (file.hasNextLine()) {
-			ArrayList<Integer> arrList = new ArrayList<>();
-			while(file.hasNext())
-				arrList.add(file.nextInt());
-			Integer[] intArr = new Integer[arrList.size()];
-			for (int i = 0; i < arrList.size(); i++)
-				intArr[i] = arrList.get(i);
+			
+			ArrayList<Integer> tempList = new ArrayList<>();
+			Scanner tempScan = new Scanner(file.nextLine());
+			
+			while (tempScan.hasNextInt())
+				tempList.add(tempScan.nextInt());
+			
+			Integer[] intArr = new Integer[tempList.size()];
+			for (int i = 0; i < intArr.length; i++)
+				intArr[i] = tempList.get(i);
+			
 			fullList.add(intArr);
 		}
 		
