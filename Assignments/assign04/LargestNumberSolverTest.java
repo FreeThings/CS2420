@@ -3,6 +3,7 @@ package assign04;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,8 +25,10 @@ class LargestNumberSolverTest {
 		intCmp = ((num1, num2) -> num1.compareTo(num2));
 		emptyIntArr = new Integer[0];
 		smallIntArr = new Integer[] {1, 3, 45, 16, 23, 36, 79};
-		smallIntList = List.of(smallIntArr, smallIntArr);
-		emptyIntList = List.of();
+		smallIntList = new ArrayList<>();
+		emptyIntList = new ArrayList<>();
+		smallIntList.add(smallIntArr);
+		smallIntList.add(smallIntArr);
 	}
 	
 	@Test
