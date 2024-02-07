@@ -45,13 +45,33 @@ public class LargestNumberSolver {
 	}
 	
 	public static int findLargestInt(Integer[] arr) throws OutOfRangeException {
+		String bigNum = "";
+		bigNum += (findLargestNumber(arr).intValue());
+		BigInteger largestInt = new BigInteger(bigNum);
+		
+		
+		if(!(findLargestNumber(arr).equals(largestInt)))
+			throw new OutOfRangeException("int");
+				
+		
 		return findLargestNumber(arr).intValue();
 	}
 	
+	
 	public static long findLargestLong(Integer[] arr) throws OutOfRangeException {
+		String bigNum = "";
+		bigNum += (findLargestNumber(arr).longValue());
+		BigInteger largestLong = new BigInteger(bigNum);
+		
+		
+		if(!(findLargestNumber(arr).equals(largestLong)))
+			throw new OutOfRangeException("long");
+				
+		
 		return findLargestNumber(arr).longValue();
 	}
 	
+	 
 	public static BigInteger sum(List<Integer[]> list) {
 	
 		
