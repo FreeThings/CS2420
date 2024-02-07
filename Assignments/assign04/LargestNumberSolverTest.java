@@ -91,7 +91,7 @@ class LargestNumberSolverTest {
 	
 	@Test
 	void testSumEmpty() {
-		assertEquals(LargestNumberSolver.sum(emptyIntList), 0);
+		assertEquals(LargestNumberSolver.sum(emptyIntList), new BigInteger("0"));
 	}
 	
 	@Test
@@ -102,7 +102,7 @@ class LargestNumberSolverTest {
 	
 	@Test
 	void testKthLargestEmpty() {
-		assertEquals(LargestNumberSolver.findKthLargest(emptyIntList, 0), 0);
+		assertThrows(IllegalArgumentException.class, () -> {LargestNumberSolver.findKthLargest(emptyIntList, 0);});
 	}
 	
 	@Test
@@ -114,12 +114,15 @@ class LargestNumberSolverTest {
 	
 	@Test
 	void testReadEmptyFile() {
-		assertEquals(LargestNumberSolver.readFile("emptyText.txt"), emptyIntList);
+		assertEquals(LargestNumberSolver.readFile("src/assign04/emptyText.txt"), emptyIntList);
 	}
 	
 	@Test
 	void testReadNonEmptyFile() {
-		assertEquals(LargestNumberSolver.readFile("smallText.txt"), "");
+		List<Integer[]> expected = new ArrayList<>();
+		expected.add(new Integer[] {5, 6, 77, 23});
+		
+		assertArrayEquals(LargestNumberSolver.readFile("src/assign04/smallText.txt").get(0), expected.get(0));
 	}
 	
 }
