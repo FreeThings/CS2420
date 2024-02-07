@@ -24,23 +24,23 @@ class LargestNumberSolverTest {
 		intCmp = ((num1, num2) -> num1.compareTo(num2));
 		emptyIntArr = new Integer[0];
 		smallIntArr = new Integer[] {1, 3, 45, 16, 23, 36, 79};
-		smallIntList.add(smallIntArr);
-		smallIntList.add(smallIntArr);
+		smallIntList = List.of(smallIntArr, smallIntArr);
+		emptyIntList = List.of();
 	}
 	
 	@Test
 	void testInsertionSortEmpty() {
 		Integer[] emptycopyArr = new Integer[0];
 		LargestNumberSolver.insertionSort(emptyIntArr, intCmp);
-		assertEquals(emptycopyArr, emptyIntArr);
+		assertArrayEquals(emptycopyArr, emptyIntArr);
 		
 	}
 	
 	@Test
 	void testInsertionSortNormalCase() {
-		Integer[] copyArr = new Integer[] {79, 45, 36, 23, 16, 3, 1};
-		LargestNumberSolver.insertionSort(emptyIntArr, intCmp);
-		assertEquals(copyArr, emptyIntArr);
+		Integer[] copyArr = new Integer[] {79, 45, 36, 23, 16, 3, 1}; 
+		LargestNumberSolver.insertionSort(smallIntArr, intCmp);
+		assertArrayEquals(copyArr, smallIntArr);
 	}
 
 	@Test
@@ -52,7 +52,7 @@ class LargestNumberSolverTest {
 	
 	@Test
 	void testFindLargestNumberEmpty() {
-		assertEquals(0, LargestNumberSolver.findLargestNumber(emptyIntArr));
+		assertEquals(new BigInteger("0"), LargestNumberSolver.findLargestNumber(emptyIntArr));
 		
 	}
 	
@@ -70,13 +70,13 @@ class LargestNumberSolverTest {
 	
 	@Test
 	void testFindLargestIntEmpty() {
-		assertEquals(0, LargestNumberSolver.findLargestNumber(emptyIntArr));
+		assertEquals(new BigInteger("0"), LargestNumberSolver.findLargestNumber(emptyIntArr));
 	}
 	
 	@Test
 	void testFindLargestLongNormal() {
 		//May need to be changed later
-		long l = 794536323;
+		long l = 794536323161L;
 		assertEquals(l, LargestNumberSolver.findLargestLong(smallIntArr));
 	}
 	
