@@ -1,8 +1,12 @@
 package assign04;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 
 public class LargestNumberSolver {
 
@@ -18,7 +22,8 @@ public class LargestNumberSolver {
 	}
 	
 	public static BigInteger findLargestNumber(Integer[] arr) {
-		
+		if (arr.length == 0)
+			return new BigInteger("0");
 		Comparator<Integer> cmp = (num1, num2) -> {
 			if (num1 == num2)
 				return 0;
@@ -35,13 +40,12 @@ public class LargestNumberSolver {
 		
 		insertionSort(arr, cmp);
 		
-		String bigInt = "";
-		
+		StringBuilder bigNumber = new StringBuilder();
 		for (int i : arr)
-			bigInt += i;
+			bigNumber.append(i);
 		
 		
-		return new BigInteger(bigInt);
+		return new BigInteger(bigNumber.toString());
 	}
 	
 	public static int findLargestInt(Integer[] arr) throws OutOfRangeException {
@@ -71,25 +75,49 @@ public class LargestNumberSolver {
 		return findLargestNumber(arr).longValue();
 	}
 	
-	 
 	public static BigInteger sum(List<Integer[]> list) {
-	
-		
-		return null;
+		BigInteger sum = new BigInteger("0");
+		for (Integer[] arr : list) {
+			sum = sum.add(findLargestNumber(arr));
+		}
+		return sum;
 	}
 	
 	public static Integer[] findKthLargest(List<Integer[]> list, int k) throws IllegalArgumentException {
-		
-		
+		if (k > list.size()-1 || k < 0)
+			throw new IllegalArgumentException("Enter a k value within the range of list size.");
+		BigInteger[] arr = new BigInteger[list.size()];
+		for (int i = 0; i < list.size(); i++)
+			arr[i] = findLargestNumber(list.get(i));
+		BigInteger[] arrUnsorted = arr.clone();
+		insertionSort(arr, (num1, num2) -> (num1.compareTo(num2)));
+		for(int i = 0; i < arr.length; i++) {
+			if (arr[k].equals(arrUnsorted[i]))
+				return list.get(i);
+		}
 		return null;
 	}
 	
 	
 	public static List<Integer[]> readFile(String filename) {
+		List<Integer[]> fullList = new ArrayList<>();
+		Scanner file;
+		try {
+			file = new Scanner(new File(filename));
+		} catch (FileNotFoundException e) {
+			return new ArrayList<Integer[]>();
+		}
+		while (file.hasNextLine()) {
+			ArrayList<Integer> arrList = new ArrayList<>();
+			while(file.hasNext())
+				arrList.add(file.nextInt());
+			Integer[] intArr = new Integer[arrList.size()];
+			for (int i = 0; i < arrList.size(); i++)
+				intArr[i] = arrList.get(i);
+			fullList.add(intArr);
+		}
 		
-		
-		
-		return null;
+		return fullList;
 	}
 	
 	
