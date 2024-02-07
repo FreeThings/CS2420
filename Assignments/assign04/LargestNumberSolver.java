@@ -8,8 +8,12 @@ public class LargestNumberSolver {
 
 	public static <T> void insertionSort(T[] arr, Comparator<? super T> cmp) {
 		
-//		for (int i = 1; i < arr.length; i++)
-//			for (int j = i-1; j >= 0 && arr[j] > arr[j+1]; j--){
+		for (int i = 1; i < arr.length; i++) {
+			for (int j = i-1; j >= 0 && cmp.compare(arr[j], arr[j+1]) > 0; j--){
+				
+			}
+		
+		}
 		
 		
 	}
