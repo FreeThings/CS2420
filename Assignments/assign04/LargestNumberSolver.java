@@ -8,8 +8,35 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class for static methods related to finding the largest number possibly formed out of an array of
+ * Integers. For example, in an array defined as {23, 16, 52, 3, 6}, the largest possible number to be
+ * formed is 65232316, which is returned as a BigInteger.
+ * 
+ * This class also contains methods for finding the array with the kth largest number possible from the
+ * above method, a method for an insertion sort for generic arrays, the sum of the largest numbers possible
+ * from each array in a list of Integers, and methods for finding the largest number possible as an Integer
+ * or Long (so long as the largest number is not too big for either data type).
+ * 
+ * Class: CS 2420
+ * Assignment 4: LargestNumberSolver
+ * 
+ * @author Christopher Hunter and Aiden De Boer
+ * @version 02/08/2024
+ */
 public class LargestNumberSolver {
 
+	
+	/**
+	 * Takes in an array of any type as well as a custom ordering in the form of a comparator object or lambda
+	 * expression to define how to sort the array through an insertion sort (Increasing how much of the array is
+	 * sorted by one and placing that element in the right order in the sorted portion, then increasing sorted portion
+	 * and repeating).
+	 * 
+	 * @param <T> - Type of array to be sorted
+	 * @param arr - Array of elements to be sorted
+	 * @param cmp - Comparator object to sort the given array using
+	 */
 	public static <T> void insertionSort(T[] arr, Comparator<? super T> cmp) {
 		
 		for (int i = 1; i < arr.length; i++) {
@@ -21,7 +48,14 @@ public class LargestNumberSolver {
 		}
 		
 	}
-	
+	/**
+	 * Takes in an Integer array and finds the largest number possible as a BigInteger object.
+	 * For example, in an array defined as {23, 16, 52, 3, 6}, the largest possible number to be
+	 * formed is 65232316, which is returned as a BigInteger. Does not modify original array
+	 * 
+	 * @param arr - Array of Integers to search for biggest number possible
+	 * @return - BigInteger value for the Largest Number possible from combining elements
+	 */
 	public static BigInteger findLargestNumber(Integer[] arr) {
 		Integer[] tempArr = arr.clone();
 		
@@ -54,6 +88,16 @@ public class LargestNumberSolver {
 		return new BigInteger(bigNumber.toString());
 	}
 	
+	/**
+	 * Finds and returns largest possible number as outlined in the findLargestNumber 
+	 * method as an int, unless the largest number is too large for the int data type, 
+	 * in which case an OutOfRangeException is thrown
+	 * 
+	 * @param arr - Integer array to search for largest number
+	 * @return - int value for largest number possible, if it isn't too big for the int data type
+	 * @throws OutOfRangeException - Exception thrown if largest number possible for the given array
+	 * is too large for the int data type
+	 */
 	public static int findLargestInt(Integer[] arr) throws OutOfRangeException {
 		String bigNum = "";
 		bigNum += (findLargestNumber(arr).intValue());
@@ -67,7 +111,16 @@ public class LargestNumberSolver {
 		return findLargestNumber(arr).intValue();
 	}
 	
-	
+	/**
+	 * Finds and returns largest possible number as outlined in the findLargestNumber 
+	 * method as a long, unless the largest number is too large for the long data type, 
+	 * in which case an OutOfRangeException is thrown
+	 * 
+	 * @param arr - Integer array to search for largest number
+	 * @return - long value for largest number possible, if it isn't too big for the long data type
+	 * @throws OutOfRangeException - Exception thrown if largest number possible for the given array
+	 * is too large for the long data type
+	 */
 	public static long findLargestLong(Integer[] arr) throws OutOfRangeException {
 		String bigNum = "";
 		bigNum += (findLargestNumber(arr).longValue());
@@ -81,6 +134,13 @@ public class LargestNumberSolver {
 		return findLargestNumber(arr).longValue();
 	}
 	
+	/**
+	 * Adds all largest numbers possible in a list of Integer arrays together then returns
+	 * that value as a BigInteger value
+	 * 
+	 * @param list - Given list of Integer Arrays to add together
+	 * @return - BigInteger value for the sum of all largest numbers possible in a list of Integer Arrays
+	 */
 	public static BigInteger sum(List<Integer[]> list) {
 		BigInteger sum = new BigInteger("0");
 		for (Integer[] arr : list) {
@@ -89,6 +149,17 @@ public class LargestNumberSolver {
 		return sum;
 	}
 	
+	/**
+	 * Takes in a list of Integer arrays, then finds the largest numbers possible for each array,
+	 * then finds the kth largest number (with k being given in the parameter). Throws IllegalArgumentException
+	 * if k is larger than the size of the list.
+	 * 
+	 * @param list - List of Integer arrays to look through
+	 * @param k - The position in the largest number ranking to have the array returned for (i.e. 
+	 * 0 would be largest, 2, would be third largest, 26 would be 26th largest, etc)
+	 * @return - Array in the given list that has the kth largest number possible
+	 * @throws IllegalArgumentException - Exception thrown if k is larger than list size
+	 */
 	public static Integer[] findKthLargest(List<Integer[]> list, int k) throws IllegalArgumentException {
 		if (k > list.size()-1 || k < 0)
 			throw new IllegalArgumentException("Enter a k value within the range of list size.");
@@ -107,7 +178,13 @@ public class LargestNumberSolver {
 		return null;
 	}
 	
-	
+	/**
+	 * Takes in a fileName, then looks for said file reads its content, then translates it
+	 * to an Integer ArrayList
+	 * 
+	 * @param filename - Name of file to be read
+	 * @return - Integer ArrayList with file contents within
+	 */
 	public static List<Integer[]> readFile(String filename) {
 		List<Integer[]> fullList = new ArrayList<>();
 		Scanner file;
