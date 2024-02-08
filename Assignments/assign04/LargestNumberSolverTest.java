@@ -9,6 +9,15 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * For testing the LargestNumberSolver class.
+ *
+ * Class CS: 2420
+ * Assignment 4: LargestNumberSolver
+ * 
+ * @author Christopher Hunter and Aiden De Boer
+ * @version 02/08/2024
+ */
 class LargestNumberSolverTest {
 
 	private Comparator<Integer> intCmp;
@@ -150,6 +159,15 @@ class LargestNumberSolverTest {
 		assertEquals(LargestNumberSolver.sum(smallIntList), b);
 	}
 	
+	@Test
+	void testSumZeros() {
+		Integer[] zerosArr = new Integer[] {0, 0, 0, 0};
+		emptyIntList.add(zerosArr);
+		emptyIntList.add(zerosArr);
+		emptyIntList.add(zerosArr);
+		assertEquals(LargestNumberSolver.sum(emptyIntList), new BigInteger("0"));
+	}
+	
 	// Testing findKthLargest -------------------------------------------------------------------------
 	
 	@Test
@@ -171,6 +189,44 @@ class LargestNumberSolverTest {
 		assertEquals(0, LargestNumberSolver.findKthLargest(emptyIntList, 2)[0]);
 	}
 	
+	@Test
+	void testKthLargestMoreValuesSmallest() {
+		List<Integer[]> intList = new ArrayList<>();
+		intList = LargestNumberSolver.readFile("src/assign04/integers.txt");
+		assertArrayEquals(LargestNumberSolver.findKthLargest(intList, intList.size()-1), new Integer[] {23});
+	}
+	
+	@Test
+	void testKthLargestMoreValuesLargest() {
+		Integer[] correctIntArr = new Integer[] {62, 72, 52, 37, 35, 50, 90, 255, 69, 8328, 97, 42, 1447, 50, 930,
+				23, 51, 50, 76, 33, 33, 94, 35, 14, 30, 31, 83, 54, 83, 85, 43, 85, 38, 44, 20, 70, 69, 38, 38,
+				16, 79, 91, 9907, 85, 21, 18, 49, 7, 94, 283, 14, 65, 53, 5, 18, 48, 17, 87, 66, 91, 87, 49, 98,
+				81, 57, 1949, 104, 6964, 63, 88, 85, 49, 27, 4, 44, 89, 59, 73, 10, 7723, 39, 74, 750, 84, 89, 22,
+				9, 81, 192, 65, 32, 1, 96, 9982, 58, 77, 46, 12, 85, 57};
+		List<Integer[]> intList = new ArrayList<>();
+		intList = LargestNumberSolver.readFile("src/assign04/integers.txt");
+		assertArrayEquals(LargestNumberSolver.findKthLargest(intList, 0), correctIntArr);
+	}
+	
+	@Test
+	void testKthLargesSameValues() {
+		Integer[] i = new Integer[] {1, 2, 3};
+		Integer[] j = new Integer[] {1, 2, 3};
+		Integer[] k = new Integer[] {1, 2, 3};
+		Integer[] l = new Integer[] {1, 2, 3};
+		List<Integer[]> intList = new ArrayList<>();
+		intList.add(i);
+		intList.add(j);
+		intList.add(k);
+		intList.add(l);
+		assertArrayEquals(LargestNumberSolver.findKthLargest(intList, 0), i);
+		assertArrayEquals(LargestNumberSolver.findKthLargest(intList, 1), i);
+		assertArrayEquals(LargestNumberSolver.findKthLargest(intList, 2), i);
+		assertArrayEquals(LargestNumberSolver.findKthLargest(intList, 3), i);
+		assertThrows(IllegalArgumentException.class, () -> {LargestNumberSolver.findKthLargest(emptyIntList, 4);});
+		assertThrows(IllegalArgumentException.class, () -> {LargestNumberSolver.findKthLargest(emptyIntList, intList.size());});
+	}
+	
 	// Testing readFile -------------------------------------------------------------------------------
 	
 	@Test
@@ -184,6 +240,23 @@ class LargestNumberSolverTest {
 		expected.add(new Integer[] {67, 10, 45, 31, 61, 17, 59, 68, 93, 46, 52});
 		
 		assertArrayEquals(LargestNumberSolver.readFile("src/assign04/integers.txt").get(5), expected.get(0));
+	}
+	
+	@Test
+	void testReadFileOfSameValues() {
+		List<Integer[]> intList = new ArrayList<>();
+		intList = LargestNumberSolver.readFile("src/assign04/sameInts.txt");
+		assertEquals(intList.size(), 10);
+		Integer[] expected = new Integer[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+		for (int i = 0; i < intList.size(); i++)
+			assertArrayEquals(intList.get(i), expected);
+
+	}
+	
+	@Test
+	void testReadFileIfFileDoesNotExist() {
+		List<Integer[]> intList = new ArrayList<>();
+		assertEquals(LargestNumberSolver.readFile("nonexistent/filepath"), intList);
 	}
 	
 }
