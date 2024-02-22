@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 
 public class ArrayListSorter {
-private final static int threshold = 0;
+    private final static int threshold = 2;
 
     /**
      * This is a basic insertion sort method that takes in two index values, a high and low, that can be
@@ -17,7 +17,7 @@ private final static int threshold = 0;
      * @param <T> - the type of the ArrayList
      */
     private static <T extends Comparable<? super T>> void insertionSort(ArrayList<T> arr, int low, int high) {
-        for (int i = low + 1; i < high + 1; i++) {
+        for (int i = low; i < high + 1; i++) {
             T val = arr.get(i);
             int j;
             for (j = i - 1; j >= 0 && arr.get(j).compareTo(val) > 0; j--) {
@@ -27,17 +27,6 @@ private final static int threshold = 0;
 
             }
         }
-
-//        for (int i = low + 1; i < high + 1; i++) {
-//            T val = arr.get(i);
-//            int j = i - 1;
-//
-//            while (j >= 0 && arr.get(j).compareTo(val) > 0) {
-//                arr.set(j+1, arr.get(j));
-//                j = j - 1;
-//            }
-//            arr.set(j+1, val);
-//        }
     }
 
     /**
@@ -72,20 +61,35 @@ private final static int threshold = 0;
      */
     private static <T extends Comparable<? super T>> void mergesort(ArrayList<T> arr, ArrayList<T> temp, int low, int high){
 
-        if(high - low <= threshold) {
-            insertionSort(arr, low, high);
-            return;
-        }
+//        if(high - low <= threshold  && low < high) {
+//            insertionSort(arr, low, high);
+//            return;
+//        }
+//
+//        if (low >= high)
+//            return;
+//
+//        int mid = low + (high - low) / 2;
+//
+//        mergesort(arr, temp, low, mid);
+//        mergesort(arr, temp, mid + 1, high);
+//
+//        merge(arr, temp, low, mid + 1, high);
 
         if (low >= high)
             return;
 
-        int mid = low + (high - low) / 2;
+        if(high - low <= threshold && threshold > 1) {
+            insertionSort(arr, low, high);
+        } else {
+            int mid = low + (high - low) / 2;
 
-        mergesort(arr, temp, low, mid);
-        mergesort(arr, temp, mid + 1, high);
+            mergesort(arr, temp, low, mid);
+            mergesort(arr, temp, mid + 1, high);
 
-        merge(arr, temp, low, mid + 1, high);
+            merge(arr, temp, low, mid + 1, high);
+        }
+
     }
 
     /**
@@ -221,9 +225,9 @@ private final static int threshold = 0;
     }
 
     public static ArrayList<Integer> generateDescending(int size) {
-        ArrayList<Integer> descending = generateAscending(size);
-        for(int i = 0; i < size; i++) {
-           descending.set(i, i+1);
+        ArrayList<Integer> descending = new ArrayList<>();
+        for(int i = size; i > 0; i--) {
+            descending.add(i);
         }
 
         return descending;
