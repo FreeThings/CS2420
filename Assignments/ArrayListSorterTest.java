@@ -52,6 +52,18 @@ class ArrayListSorterTest {
         ArrayList<Integer> toBeSorted = ArrayListSorter.generatePermuted(10);
         toBeSorted.sort(intAscendingCmp);
         assertEquals(descend.size(), 10);
+        ArrayList<Integer> sorted = new ArrayList<>();
+        sorted.add(10);
+        sorted.add(9);
+        sorted.add(8);
+        sorted.add(7);
+        sorted.add(6);
+        sorted.add(5);
+        sorted.add(4);
+        sorted.add(3);
+        sorted.add(2);
+        sorted.add(1);
+        assertEquals(sorted, descend);
     }
 
     //Mergesort tests
@@ -192,7 +204,7 @@ class ArrayListSorterTest {
         ArrayListSorter.quicksort(toSort);
         assertEquals(toSort, sorted);
     }
-    
+
     @Test
     void testQuicksortSizeOne(){
         ArrayList<Integer> toSort = new ArrayList<>();
@@ -249,7 +261,7 @@ class ArrayListSorterTest {
 
     @Test
     void testLargeMergesort() {
-        ArrayList<Integer> largeList = ArrayListSorter.generateDescending(100);
+        ArrayList<Integer> largeList = ArrayListSorter.generateAscending(100);
         ArrayList<Integer> permList = ArrayListSorter.generatePermuted(100);
         ArrayListSorter.mergesort(permList);
         assertEquals(largeList, permList);
