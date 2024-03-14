@@ -221,7 +221,7 @@ public class GraphUtilityTest {
     }
 
     @Test
-    void testUnachievablePathDepthSearch(){
+    void testUnachievablePathTopologicalSearch(){
         List<String> sources = new LinkedList<>();
         sources.add("A");
         sources.add("C");
@@ -230,7 +230,85 @@ public class GraphUtilityTest {
         destinations.add("B");
         destinations.add("B");
 
-        assertFalse(GraphUtility.areConnected(sources, destinations, "A", "C"));
+        List<String> path = new LinkedList<>();
+        path.add("A");
+        path.add("C");
+        path.add("B");
+
+        assertEquals(path, GraphUtility.sort(sources, destinations));
+    }
+
+    @Test
+    void testSeperatedVerticesTopologicalSort(){
+        List<String> sources = new LinkedList<>();
+        sources.add("A");
+        sources.add("B");
+        sources.add("C");
+
+        List<String> destinations = new LinkedList<>();
+        destinations.add("D");
+        destinations.add("E");
+        destinations.add("F");
+
+        List<String> sorted = new LinkedList<>();
+        sorted.add("A");
+        sorted.add("B");
+        sorted.add("C");
+        sorted.add("D");
+        sorted.add("E");
+        sorted.add("F");
+
+        assertEquals(sorted, GraphUtility.sort(sources, destinations));
+    }
+
+    @Test
+    void testDepthSearchForEmptyGraph(){
+        List<String> sources = new LinkedList<>();
+        List<String> destinations = new LinkedList<>();
+
+        assertThrows(IllegalArgumentException.class, () -> GraphUtility.areConnected(sources, destinations, "A", "B"));
+    }
+
+    @Test
+    void testBreadthSearchForEmptyGraph(){
+        List<String> sources = new LinkedList<>();
+        List<String> destinations = new LinkedList<>();
+
+        assertThrows(IllegalArgumentException.class, () -> GraphUtility.shortestPath(sources, destinations, "A", "B"));
+    }
+
+    @Test
+    void testTopologicalSortForEmptyGraph(){
+        List<String> sources = new LinkedList<>();
+        List<String> destinations = new LinkedList<>();
+
+        assertThrows(IllegalArgumentException.class, () -> GraphUtility.sort(sources, destinations));
+    }
+
+    @Test
+    void testUnachievablePathBreadthSearch(){
+        List<String> sources = new LinkedList<>();
+        sources.add("A");
+        sources.add("C");
+
+        List<String> destinations = new LinkedList<>();
+        destinations.add("B");
+        destinations.add("B");
+
+        assertThrows(IllegalArgumentException.class, () -> GraphUtility.shortestPath(sources, destinations, "A", "C"));
+    }
+
+    @Test
+    void testDepthSearchTwoSeperatePaths(){
+        List<String> sources = new LinkedList<>();
+        sources.add("A");
+        sources.add("C");
+
+        List<String> destinations = new LinkedList<>();
+        destinations.add("B");
+        destinations.add("D");
+
+        assertTrue(GraphUtility.areConnected(sources, destinations, "C", "D"));
     }
 
 }
