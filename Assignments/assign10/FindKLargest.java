@@ -7,9 +7,12 @@ import java.util.List;
 
 /**
  * This class contains generic static methods for finding the k largest items in a list.
- * 
- * @author Erin Parker and ??
- * @version ??
+ *
+ * Class: CS 2420
+ * Assignment 10: BinaryMaxHeap
+ *
+ * @author Erin Parker, Aiden de Boer, and Christopher Hunter
+ * @version 04/11/2024
  */
 public class FindKLargest {
 	
