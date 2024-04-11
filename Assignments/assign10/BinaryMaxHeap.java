@@ -1,9 +1,22 @@
 package assign10;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * This class implements a binary max heap data structure using a priority queue interface.
+ * It has a backing array that stores the items in the heap and a comparator to decide the ordering
+ * of the items in the heap, if natural ordering is not used.
+ * @param <E> - Type of items to be stored in the BinaryMaxHeap
+ *
+ * Class: CS 2420
+ * Assignment 10: BinaryMaxHeap
+ *
+ * @author - Aiden De Boer and Christopher Hunter
+ * @version - 04/11/2024
+ */
 public class BinaryMaxHeap<E> implements PriorityQueue<E> {
 
     private E[] backingArr;
@@ -59,8 +72,8 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
     }
 
     /**
-     * Adds the given item to this priority queue.
-     * O(1) in the average case, O(log N) in the worst case
+     * This method adds an item to the BinaryMaxHeap and positions it correctly
+     * in the heap by percolating it up. Will resize the array if the backing array is full.
      *
      * @param item - Item to add to the BinaryMaxHeap
      */
@@ -76,8 +89,8 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
     }
 
     /**
-     * Returns, but does not remove, the maximum item this priority queue.
-     * O(1)
+     * This method returns the maximum item in the BinaryMaxHeap. If the BinaryMaxHeap is empty,
+     * a NoSuchElementException is thrown.
      *
      * @return the maximum item
      * @throws NoSuchElementException if this priority queue is empty
@@ -90,8 +103,8 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
     }
 
     /**
-     * Returns and removes the maximum item this priority queue.
-     * O(log N)
+     * This method removes and returns the maximum item in the BinaryMaxHeap. If the BinaryMaxHeap is empty,
+     * a NoSuchElementException is thrown.
      *
      * @return the maximum item
      * @throws NoSuchElementException if this priority queue is empty
@@ -109,8 +122,7 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
     }
 
     /**
-     * Returns the number of items in this priority queue.
-     * O(1)
+     * This method returns the number of items in the BinaryMaxHeap
      */
     @Override
     public int size() {
@@ -118,8 +130,7 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
     }
 
     /**
-     * Returns true if this priority queue is empty, false otherwise.
-     * O(1)
+     * This method returns whether the BinaryMaxHeap is empty or not
      */
     @Override
     public boolean isEmpty() {
@@ -127,23 +138,18 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
     }
 
     /**
-     * Empties this priority queue of items.
-     * O(1)
+     * This method empties the BinaryMaxHeap of all items by creating a new backing array
+     * and setting the size to 0
      */
     @SuppressWarnings("unchecked")
     @Override
     public void clear() {
         backingArr = (E[])new Object[10];
+        size = 0;
     }
 
     /**
-     * Creates and returns an array of the items in this priority queue,
-     * in the same order they appear in the backing array.
-     * O(N)
-     * <p>
-     * (NOTE: This method is needed for grading purposes. The root item
-     * must be stored at index 0 in the returned array, regardless of
-     * whether it is in stored there in the backing array.)
+     * This method returns an array of the items in the BinaryMaxHeap in the same order they appear in the backing array
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -155,13 +161,14 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
                 newArr[i-1] = backingArr[i];
         }
 
-
         return newArr;
     }
 
 
     /**
-     * Builds a heap from the given list of items.
+     * Builds the BinaryMaxHeap using the list given
+     *
+     * @param list - List of items used to build BinaryMaxHeap
      */
     private void buildHeap(List<? extends E> list) {
         this.size = list.size();
@@ -174,63 +181,77 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
 
     }
 
+    /**
+     * Percolates the item at the given index up to its correct position
+     *
+     * @param index - Index of item to percolate up
+     */
     private void percolateUp(int index) {
-        if(innerCompare()) {
-            if (getParentIndex(index) != null){
-                if (cmp.compare(backingArr[index], backingArr[getParentIndex(index)]) > 0){
+        if(innerCompare()) { // Using comparator
+            if (getParentIndex(index) != null){ // If parent exists
+                if (cmp.compare(backingArr[index], backingArr[getParentIndex(index)]) > 0){ // If parent is less than child
                     swap(index, getParentIndex(index));
-                    percolateUp(getParentIndex(index));
+                    percolateUp(getParentIndex(index)); // Recursively call percolateUp
                 }
             }
-        } else {
-            if (getParentIndex(index) != null){
-                if (((Comparable<? super E>)backingArr[index]).compareTo(backingArr[getParentIndex(index)]) > 0){
+        } else { // Using natural ordering
+            if (getParentIndex(index) != null){ // If parent exists
+                if (((Comparable<? super E>)backingArr[index]).compareTo(backingArr[getParentIndex(index)]) > 0){ // If parent is less than child
                     swap(index, getParentIndex(index));
-                    percolateUp(getParentIndex(index));
+                    percolateUp(getParentIndex(index)); // Recursively call percolateUp
                 }
             }
         }
 
     }
 
+    /**
+     * Percolates the item at the given index down to its correct position
+     *
+     * @param index - Index of item to percolate down
+     */
     private void percolateDown(int index) {
-        if (innerCompare()){
-            if (getRightChildIndex(index) != null)
-                if(cmp.compare(backingArr[index], backingArr[getRightChildIndex(index)]) < 0){
+        if (innerCompare()){ // Using comparator
+            if (getRightChildIndex(index) != null) // If right child exists
+                if(cmp.compare(backingArr[index], backingArr[getRightChildIndex(index)]) < 0){ // If parent is less than right child
                     swap(index, getRightChildIndex(index));
-                    percolateDown(getRightChildIndex(index));
+                    percolateDown(getRightChildIndex(index)); // Recursively call percolateDown
                 }
-
-            if (getLeftChildIndex(index) != null)
-                if(cmp.compare(backingArr[index], backingArr[getLeftChildIndex(index)]) < 0){
+            if (getLeftChildIndex(index) != null) // If left child exists
+                if(cmp.compare(backingArr[index], backingArr[getLeftChildIndex(index)]) < 0){ // If parent is less than left child
                     swap(index, getLeftChildIndex(index));
-                    percolateDown(getLeftChildIndex(index));
+                    percolateDown(getLeftChildIndex(index)); // Recursively call percolateDown
                 }
 
-        } else {
-            if (getRightChildIndex(index) != null)
-                if(((Comparable<? super E>)backingArr[index]).compareTo(backingArr[getRightChildIndex(index)]) < 0) {
+        } else { // Using natural ordering
+            if (getRightChildIndex(index) != null) // If right child exists
+                if(((Comparable<? super E>)backingArr[index]).compareTo(backingArr[getRightChildIndex(index)]) < 0) { // If parent is less than right child
                     swap(index, getRightChildIndex(index));
-                    percolateDown(getRightChildIndex(index));
+                    percolateDown(getRightChildIndex(index)); // Recursively call percolateDown
                 }
-            if (getLeftChildIndex(index) != null)
-                if(((Comparable<? super E>)backingArr[index]).compareTo(backingArr[getLeftChildIndex(index)]) < 0){
+            if (getLeftChildIndex(index) != null)  // If left child exists
+                if(((Comparable<? super E>)backingArr[index]).compareTo(backingArr[getLeftChildIndex(index)]) < 0){ // If parent is less than left child
                     swap(index, getLeftChildIndex(index));
-                    percolateDown(getLeftChildIndex(index));
+                    percolateDown(getLeftChildIndex(index)); // Recursively call percolateDown
                 }
-
-
         }
     }
 
     /**
      * Returns whether the BinaryMaxHeap is using a comparator or not
+     *
      * @return - True if using a comparator, false otherwise
      */
     private boolean innerCompare() {
         return this.cmp != null;
     }
 
+    /**
+     * Returns the index of the parent of the item from a given index or if parent does not exist
+     *
+     * @param index - Index of item to find parent of
+     * @return - Index of parent of item from given index or null if parent does not exist
+     */
     private Integer getParentIndex(int index){
         int temp = index / 2;
         if (temp < 1)
@@ -238,6 +259,12 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
         return temp;
     }
 
+    /**
+     * Returns the index of the left child of the item from a given index or if left child does not exist
+     *
+     * @param index - Index of item to find left child of
+     * @return - Index of left child of item from given index or null if left child does not exist
+     */
     private Integer getLeftChildIndex(int index){
         int temp = index * 2;
         if (temp > size)
@@ -245,6 +272,12 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
         return temp;
     }
 
+    /**
+     * Returns the index of the right child of the item from a given index or if right child does not exist
+     *
+     * @param index - Index of item to find right child of
+     * @return - Index of right child of item from given index or null if right child does not exist
+     */
     private Integer getRightChildIndex(int index){
         int temp = index * 2 + 1;
         if (temp > size)
@@ -252,17 +285,28 @@ public class BinaryMaxHeap<E> implements PriorityQueue<E> {
         return temp;
     }
 
+    /**
+     * Swaps the items at the given indices
+     *
+     * @param index1 - Index of first item to swap
+     * @param index2 - Index of second item to swap
+     */
     private void swap(int index1, int index2){
         E temp = backingArr[index1];
         backingArr[index1] = backingArr[index2];
         backingArr[index2] = temp;
     }
+
+    /**
+     * Resizes the backing array to double its current size
+     */
     @SuppressWarnings("unchecked")
     private void resizeArray() {
         E[] newArr = (E[]) new Object[backingArr.length * 2];
-        for(int i = 0; i < backingArr.length; i++) {
+        for(int i = 0; i < backingArr.length; i++) { // Copy over all elements
             newArr[i] = backingArr[i];
         }
-        backingArr = newArr;
+
+        backingArr = newArr; // Set backing array to new array
     }
 }
