@@ -239,10 +239,10 @@ public class Generator {
 
                 List<Map.Entry<String, Integer>> list = generateOrderedList(currentWord);
 
-                System.out.print(list.getFirst().getKey() + " ");
+                System.out.print(list.get(0).getKey() + " ");
 
-                if (list.getFirst() != null)
-                    currentWord = list.getFirst().getKey();
+                if (list.get(0) != null)
+                    currentWord = list.get(0).getKey();
             }
 
         }
