@@ -65,8 +65,14 @@ public class GeneratorTest {
     }
 
     @Test
+    void testSmallFileNoArg2(){
+        Generator gen = new Generator("src/comprehensive/small.txt", "hello", "10");
+
+    }
+
+    @Test
     void testBiggerFileAll(){
-        Generator gen = new Generator("src/comprehensive/voyage.txt", "voyage", "50", "all");
+        Generator gen = new Generator("src/comprehensive/voyage.txt", "voyage", "1000000", "all");
     }
 
 
@@ -75,6 +81,25 @@ public class GeneratorTest {
         Generator gen = new Generator("src/comprehensive/voyage.txt", "voyage", "50");
     }
 
+    @Test
+    void testBiggerFileOne2(){
+        Generator gen = new Generator("src/comprehensive/voyage.txt", "voyage", "1000000", "one");
+    }
+
+    @Test
+    void testMediumFileNoArg(){
+        Generator gen = new Generator("src/comprehensive/medium.txt", "chris", "10");
+    }
+
+    @Test
+    void testMediumFileAll(){
+        Generator gen = new Generator("src/comprehensive/medium.txt", "aiden", "50", "all");
+    }
+
+    @Test
+    void testMediumFileOne(){
+        Generator gen = new Generator("src/comprehensive/medium.txt", "aiden", "5", "one");
+    }
 
 }
 
