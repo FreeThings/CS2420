@@ -1,5 +1,6 @@
 package comprehensive;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -23,6 +24,10 @@ public class Generator {
     private File filePath; //Private variable for the file to be read from
     private String seedWord; //Private variable for the seed word to start generating new words from
     private int k; //Private variable to keep track of how many words the user wants to generate after the seed
+    private StringBuilder generatedText;
+
+    private Hashtable<String, ArrayList<String>> wordMapList;
+    private Hashtable<String, PriorityQueue<Map.Entry<String, Integer>>> wordMapSorted;
 
     /**
      * Private HashTable to keep track of the words from the read text file, including a HashMap at each entry to
@@ -35,6 +40,8 @@ public class Generator {
      * used for calculating the probability of each next word to be generated
      */
     private Hashtable<String, Integer> wordCount;
+
+    private Comparator<Map.Entry<String, Integer>> cmp;
 
     /**
      * 3 Argument constructor for building a new Generator object given an input file's filepath as a string, the
@@ -49,11 +56,25 @@ public class Generator {
         this.filePath = new File(filePath);
         this.seedWord = seedWord;
         this.k = Integer.parseInt(k);
+        wordMapSorted = new Hashtable<>();
         wordMap = new Hashtable<>();
         wordCount = new Hashtable<>();
+        generatedText = new StringBuilder();
+
+        this.cmp = (word1, word2) -> {
+            if (word1.getValue() > word2.getValue())
+                return -1;
+            else if (word1.getValue() < word2.getValue())
+                return 1;
+            else
+                return word1.getKey().compareTo(word2.getKey());
+        };
+
         readSourceFile();
 
         generateTextNoCondition();
+
+        System.out.print(generatedText.toString());
     }
 
     /**
@@ -67,17 +88,115 @@ public class Generator {
         this.filePath = new File(filePath);
         this.seedWord = seedWord;
         this.k = Integer.parseInt(k);
+        wordMapSorted = new Hashtable<>();
+        wordMapList = new Hashtable<>();
         wordMap = new Hashtable<>();
         wordCount = new Hashtable<>();
+        generatedText = new StringBuilder();
+
+        this.cmp = (word1, word2) -> {
+            if (word1.getValue() > word2.getValue())
+                return -1;
+            else if (word1.getValue() < word2.getValue())
+                return 1;
+            else
+                return word1.getKey().compareTo(word2.getKey());
+        };
 
         readSourceFile();
 
-        if (condition.equals("all"))
-            generateTextWithConditionAll();
-        else
-            generateTextWithConditionOne();
+        if (condition.equals("all")){
 
+            generateTextWithConditionAll();
+        }
+        else{
+
+            generateTextWithConditionOne();
+        }
+
+
+        System.out.print(generatedText.toString());
     }
+
+//    private void readSourceFileAll(){
+//        try {
+//
+//            Scanner fileRead = new Scanner(filePath);
+//            String currentWord = null;
+//            String nextWord = null;
+//            while (fileRead.hasNext()){
+//
+//                if (currentWord == null){
+//                    currentWord = fileRead.next();
+//                    if (fileRead.hasNext()){
+//                        nextWord = fileRead.next();
+//                    } else {
+//                        break;
+//                    }
+//
+//                    while (true) {
+//                        currentWord = wordFormatter(currentWord);
+//                        if (currentWord.isEmpty()) {
+//                            currentWord = nextWord;
+//                            if (fileRead.hasNext())
+//                                nextWord = fileRead.next();
+//                            else
+//                                break;
+//                        } else {
+//                            break;
+//                        }
+//                    }
+//
+//
+//                } else {
+//                    currentWord = nextWord;
+//                    nextWord = fileRead.next();
+//                }
+//
+//                while (true) {
+//                    nextWord = wordFormatter(nextWord);
+//                    if (nextWord.isEmpty()) {
+//                        if (fileRead.hasNext())
+//                            nextWord = fileRead.next();
+//                        else
+//                            break;
+//                    } else {
+//                        break;
+//                    }
+//                }
+//
+//                if (!wordMap.containsKey(currentWord)){
+//                    HashMap<String, Integer> chain = new HashMap<>();
+//                    wordMap.put(currentWord, chain);
+//                }
+//
+//                if (wordMap.containsKey(currentWord)){
+//                    if (wordMap.get(currentWord).containsKey(nextWord)){
+//                        wordMap.get(currentWord).put(nextWord, wordMap.get(currentWord).get(nextWord) + 1);
+//                    } else if (!currentWord.isEmpty()){
+//                        wordMap.get(currentWord).put(nextWord, 1);
+//                    }
+//                }
+//
+////                if (!wordMapList.containsKey(currentWord)){
+////                    ArrayList<String> chain = new ArrayList<>();
+////                    chain.add(nextWord);
+////                    wordMapList.put(currentWord, chain);
+////                } else {
+////                    wordMapList.get(currentWord).add(nextWord);
+////                }
+//
+//                if (!currentWord.isEmpty())
+//                    addWordCount(currentWord);
+//
+//            }
+//
+//        } catch (FileNotFoundException e) {
+//
+//            System.out.println("Don't have da file");
+//
+//        }
+//    }
 
     private void readSourceFile() {
         try {
@@ -126,12 +245,13 @@ public class Generator {
                     }
                 }
 
-                if (!wordMap.containsKey(currentWord) && !currentWord.isEmpty()){
+                if (!wordMap.containsKey(currentWord)){
                     HashMap<String, Integer> chain = new HashMap<>();
                     wordMap.put(currentWord, chain);
                 }
+
                 if (wordMap.containsKey(currentWord)){
-                    if (wordMap.get(currentWord).containsKey(nextWord) && !currentWord.isEmpty()){
+                    if (wordMap.get(currentWord).containsKey(nextWord)){
                         wordMap.get(currentWord).put(nextWord, wordMap.get(currentWord).get(nextWord) + 1);
                     } else if (!currentWord.isEmpty()){
                         wordMap.get(currentWord).put(nextWord, 1);
@@ -174,92 +294,98 @@ public class Generator {
     private void generateTextNoCondition(){
         String currentWord = seedWord;
 
-        List<Map.Entry<String, Integer>> list = new ArrayList<>(wordMap.get(currentWord).entrySet());
+        PriorityQueue<Map.Entry<String, Integer>> list = new PriorityQueue<>(cmp);
 
-        list.add(new AbstractMap.SimpleEntry<>(seedWord, Integer.MAX_VALUE));
-
-        Collections.sort(list, (word1, word2) -> {
-            if (word1.getValue() > word2.getValue())
-                return -1;
-            else if (word1.getValue() < word2.getValue())
-                return 1;
-            else
-                return word1.getKey().compareTo(word2.getKey());
-        });
+        list.addAll(wordMap.get(currentWord).entrySet());
 
         for (int i = 0; i < k; i++) {
-            System.out.print(list.get(i % list.size()).getKey() + " ");
+            if (!list.isEmpty())
+                generatedText.append(list.poll().getKey()).append(" ");
+            else
+                break;
         }
     }
 
     private void generateTextWithConditionAll() {
         String currentWord = seedWord;
 
-        System.out.print(seedWord + " ");
 
-        for (int i = 0; i < k; i++) {
+        generatedText.append(seedWord).append(" ");
+
+        for (int i = 0; i < k - 1; i++) {
             if (!wordMap.containsKey(currentWord)){
                 currentWord = seedWord;
-                System.out.print(currentWord + " ");
+
+                generatedText.append(currentWord).append(" ");
             } else {
 
-                List<Map.Entry<String, Integer>> list = generateOrderedList(currentWord);
 
-                int amount = 0;
                 Random rand = new Random();
                 int wordNum = wordCount.get(currentWord);
-                int prob = rand.nextInt(wordNum) + 1;
-                for (Map.Entry<String, Integer> stringIntegerEntry : list) {
-                    if (amount + stringIntegerEntry.getValue() >= prob) {
-                        currentWord = stringIntegerEntry.getKey();
-                        break;
-                    } else {
-                        amount += stringIntegerEntry.getValue();
-                    }
-                }
+                int prob = rand.nextInt(wordNum);
+
+                isInList(currentWord);
+
+                currentWord = wordMapList.get(currentWord).get(prob);
 
 
+                generatedText.append(currentWord).append(" ");
 
-                System.out.print(currentWord + " ");
             }
 
+        }
+    }
+
+    private void isInList(String currentWord){
+        if (wordMapList.containsKey(currentWord))
+            return;
+        else {
+            ArrayList<String> list = new ArrayList<>();
+            for (Map.Entry<String, Integer> entry : wordMap.get(currentWord).entrySet())
+                for (int i = 0; i < entry.getValue(); i++)
+                    list.add(entry.getKey());
+            wordMapList.put(currentWord, list);
         }
     }
 
     private void generateTextWithConditionOne() {
         String currentWord = seedWord;
 
-        System.out.print(seedWord + " ");
 
-        for (int i = 0; i < k; i++) {
+        generatedText.append(seedWord).append(" ");
+
+        for (int i = 0; i < k - 1; i++) {
             if (!wordMap.containsKey(currentWord)){
                 currentWord = seedWord;
-                System.out.print(currentWord + " ");
+
+                generatedText.append(currentWord).append(" ");
             } else {
 
-                List<Map.Entry<String, Integer>> list = generateOrderedList(currentWord);
+                isOrdered(currentWord);
 
-                System.out.print(list.get(0).getKey() + " ");
+                PriorityQueue<Map.Entry<String, Integer>> list = wordMapSorted.get(currentWord);
 
-                if (list.get(0) != null)
-                    currentWord = list.get(0).getKey();
+
+                generatedText.append(list.peek().getKey()).append(" ");
+
+                if (list.peek() != null)
+                    currentWord = list.peek().getKey();
             }
 
         }
 
     }
 
-    private List<Map.Entry<String, Integer>> generateOrderedList(String currentWord){
-        List<Map.Entry<String, Integer>> list = new ArrayList<>(wordMap.get(currentWord).entrySet());
+    private void isOrdered(String word){
+        if (wordMapSorted.containsKey(word))
+            return;
+        wordMapSorted.put(word, generateOrderedQueue(word));
+    }
 
-        Collections.sort(list, (word1, word2) -> {
-            if (word1.getValue() > word2.getValue())
-                return -1;
-            else if (word1.getValue() < word2.getValue())
-                return 1;
-            else
-                return word1.getKey().compareTo(word2.getKey());
-        });
+    private PriorityQueue<Map.Entry<String, Integer>> generateOrderedQueue(String currentWord){
+        PriorityQueue<Map.Entry<String, Integer>> list = new PriorityQueue<>(cmp);
+
+        list.addAll(wordMap.get(currentWord).entrySet());
 
         return list;
     }
